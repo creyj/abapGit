@@ -161,7 +161,7 @@ CLASS ZCL_ABAPGIT_PERSISTENCE_DB IMPLEMENTATION.
 
   METHOD lock.
     DATA: lv_dummy_update_function TYPE funcname.
-
+   data LV_MSG type STRING.
     CALL FUNCTION 'ENQUEUE_EZABAPGIT'
       EXPORTING
         mode_zabapgit  = iv_mode
@@ -172,7 +172,8 @@ CLASS ZCL_ABAPGIT_PERSISTENCE_DB IMPLEMENTATION.
         system_failure = 2
         OTHERS         = 3.
     IF sy-subrc <> 0.
-      zcx_abapgit_exception=>raise( |Could not aquire lock { iv_type } { iv_value }| ).
+      message id SY-MSGID type 'S' number SY-MSGNO  with SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4 into LV_MSG.
+      ZCX_ABAPGIT_EXCEPTION=>RAISE( |Could not aquire lock { IV_TYPE } { IV_VALUE } { LV_MSG }| ).
     ENDIF.
 
     lv_dummy_update_function = get_update_function( ).
